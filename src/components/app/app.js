@@ -1,5 +1,6 @@
 import React from "react";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import * as authService from "../../services/auth-service"
 import Header from "../header";
 import Main from "../main";
 import Login from "../login";
@@ -31,6 +32,13 @@ export default class App extends React.Component {
     setAuthError = (errorMessage) => {
         const newAuthData = {...this.state.Auth, loading: false, error: errorMessage};
         this.setState({Auth: newAuthData})
+    }
+
+    login = (credentials) => {
+        this.setAuthLoading();
+        authService.signIn(credentials)
+            .then(result => console.log(result))
+            .catch(error => console.log(error))
     }
 
     isAuthorized = this.state.Auth.token !== null;
