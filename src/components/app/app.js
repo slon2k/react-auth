@@ -4,6 +4,7 @@ import * as authService from "../../services/auth-service"
 import Header from "../header";
 import Main from "../main";
 import Login from "../login";
+import Register from "../register";
 
 export default class App extends React.Component {
 
@@ -51,6 +52,20 @@ export default class App extends React.Component {
             })
     }
 
+    register = (credentials) => {
+        this.setAuthLoading();
+        authService.signUp(credentials)
+            .then(result => {
+                console.log(result);
+                const {email, idToken, localId} = result;
+                this.setAuthData({userEmail: email, token: idToken, userId: localId});
+            })
+            .catch(error => {
+                console.log(error);
+                this.setAuthError(error);
+            })
+    }
+
     logoff = () => {
         this.setState({Auth: this.initialAuthData});
     }
@@ -66,6 +81,9 @@ export default class App extends React.Component {
                         <Route exact path="/login"
                                render={() => <Login login={this.login} authData={this.state.Auth}/>}
                         />
+                        <Route exact path="/register"
+                               render={() => <Register register={this.register} authData={this.state.Auth}/>}
+                        />
                         <Route exact path="/logoff"
                                render={() => {
                                    this.logoff();
@@ -79,5 +97,4 @@ export default class App extends React.Component {
             </Router>
         )
     }
-
 }
