@@ -10,16 +10,38 @@ export default class App extends React.Component {
         Auth: {
             userId: null,
             token: null,
-            email: null
+            userEmail: 'test@test',
+            loading: false,
+            error: null,
         }
     }
 
+    setAuthData = ({userId, token, userEmail}) => {
+        const newAuthData = {
+            userId, token, userEmail, loading: false, error: null,
+        }
+        this.setState({Auth: newAuthData})
+    }
+
+    setAuthLoading = () => {
+        const newAuthData = {...this.state.Auth, loading: true, error: null};
+        this.setState({Auth: newAuthData})
+    }
+
+    setAuthError = (errorMessage) => {
+        const newAuthData = {...this.state.Auth, loading: false, error: errorMessage};
+        this.setState({Auth: newAuthData})
+    }
+
+    isAuthorized = this.state.Auth.token !== null;
+
     render() {
+        const {userEmail} = this.state.Auth;
+
         return(
             <Router>
-                <div>
-                    <h2>App</h2>
-                    <Header/>
+                <div className='container'>
+                    <Header isAuthorized={this.isAuthorized} email={userEmail}/>
                     <Switch>
                         <Route exact path="/login" component={Login}/>
                         <Route exact path="/" component={Main} />

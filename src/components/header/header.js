@@ -1,9 +1,15 @@
 import React from "react"
+import {Link} from "react-router-dom";
 
-const Header = () => {
+const Header = ({isAuthorized, email}) => {
+
     return (
         <div>
-            <h3>Header</h3>
+            <h3>{isAuthorized ? `Hello, ${email}`: 'Please log in to your account!'}</h3>
+            <nav>
+                <div><Link to="/">HOME</Link></div>
+                <div><Link to="/login">Login</Link></div>
+            </nav>
         </div>
     )
 }
