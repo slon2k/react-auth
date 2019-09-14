@@ -9,6 +9,7 @@ export default class LoginForm extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
         console.log("Submit", this.state);
+        this.props.login({email: this.state.email, password: this.state.password});
     }
 
     handleInput = (key, value) => {

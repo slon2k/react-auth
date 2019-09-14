@@ -11,7 +11,7 @@ export const signIn = async (credentials) => {
     });
     if (!result.ok) {
         console.log(result);
-        throw new Error(`Sign In Failed`);
+        throw new Error('Sign in failed');
     }
     return await result.json();
 }

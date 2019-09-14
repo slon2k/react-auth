@@ -1,5 +1,5 @@
 import React from "react";
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import * as authService from "../../services/auth-service"
 import Header from "../header";
 import Main from "../main";
@@ -7,21 +7,24 @@ import Login from "../login";
 
 export default class App extends React.Component {
 
+    initialAuthData = {
+        userId: null,
+        token: null,
+        userEmail: null,
+        loading: false,
+        error: null,
+    }
+
     state = {
-        Auth: {
-            userId: null,
-            token: null,
-            userEmail: 'test@test',
-            loading: false,
-            error: null,
-        }
+        Auth: this.initialAuthData
     }
 
     setAuthData = ({userId, token, userEmail}) => {
         const newAuthData = {
             userId, token, userEmail, loading: false, error: null,
-        }
-        this.setState({Auth: newAuthData})
+        };
+        this.setState({Auth: newAuthData});
+        console.log(this.state);
     }
 
     setAuthLoading = () => {
@@ -37,21 +40,39 @@ export default class App extends React.Component {
     login = (credentials) => {
         this.setAuthLoading();
         authService.signIn(credentials)
-            .then(result => console.log(result))
-            .catch(error => console.log(error))
+            .then(result => {
+                console.log(result);
+                const {email, idToken, localId} = result;
+                this.setAuthData({userEmail: email, token: idToken, userId: localId});
+            })
+            .catch(error => {
+                console.log(error);
+                this.setAuthError(error);
+            })
     }
 
-    isAuthorized = this.state.Auth.token !== null;
+    logoff = () => {
+        this.setState({Auth: this.initialAuthData});
+    }
 
     render() {
-        const {userEmail} = this.state.Auth;
+        const {userEmail, token} = this.state.Auth;
 
         return(
             <Router>
                 <div className='container'>
-                    <Header isAuthorized={this.isAuthorized} email={userEmail}/>
+                    <Header isAuthorized={token !== null} email={userEmail}/>
                     <Switch>
-                        <Route exact path="/login" component={Login}/>
+                        <Route exact path="/login"
+                               render={() => <Login login={this.login} authData={this.state.Auth}/>}
+                        />
+                        <Route exact path="/logoff"
+                               render={() => {
+                                   this.logoff();
+                                   return <Redirect to="/" />
+                                 }
+                               }
+                        />
                         <Route exact path="/" component={Main} />
                     </Switch>
                 </div>
