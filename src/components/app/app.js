@@ -45,6 +45,9 @@ export default class App extends React.Component {
                 console.log(result);
                 const {email, idToken, localId} = result;
                 this.setAuthData({userEmail: email, token: idToken, userId: localId});
+                localStorage.setItem('userEmail', email);
+                localStorage.setItem('token', idToken);
+                localStorage.setItem('userId', localId);
             })
             .catch(error => {
                 console.log(error);
@@ -67,7 +70,22 @@ export default class App extends React.Component {
     }
 
     logoff = () => {
+        localStorage.setItem('userEmail', '');
+        localStorage.setItem('token', '');
+        localStorage.setItem('userId', '');
         this.setState({Auth: this.initialAuthData});
+    }
+
+    componentDidMount() {
+        const token = localStorage.getItem('token');
+        const userEmail = localStorage.getItem('userEmail');
+        const userId = localStorage.getItem('userId');
+        if (token && token.trim().length !== 0) {
+            const newAuthData = {
+                userId, token, userEmail, loading: false, error: null,
+            };
+            this.setState({Auth: newAuthData});
+        }
     }
 
     render() {
