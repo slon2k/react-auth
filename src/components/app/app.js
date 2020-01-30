@@ -5,6 +5,7 @@ import Header from "../header";
 import Main from "../main";
 import Login from "../login";
 import Register from "../register";
+import Images from "../images";
 
 export default class App extends React.Component {
 
@@ -96,6 +97,7 @@ export default class App extends React.Component {
                 <div className='container'>
                     <Header isAuthorized={token !== null} email={userEmail}/>
                     <Switch>
+                        <Route exact path='/images' component={Images}/>
                         <Route exact path="/login"
                                render={() => <Login login={this.login} authData={this.state.Auth}/>}
                         />
